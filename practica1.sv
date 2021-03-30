@@ -37,7 +37,7 @@ module securitybox_controller_JJ(
 				else 	nextState <= S0;
 			
 			S1: 
-				if(PressedKey && (DoorSw==0)) begin
+				if(PressedKey && (DoorSw==0)) begin  //necesito doorsw?
 						
 					if(key == 4'b0101) nextState <= S2;			
 					else nextState <= S7; end
@@ -61,8 +61,7 @@ module securitybox_controller_JJ(
 				else nextState <= S3;
 			
 			S4:
-				if(DoorSw) nextState <= S0;
-				else nextState <= S10;
+				nextState <= S10;
 				
 			S6: 
 				if(PressedKey && (DoorSw==0)) nextState <= S7;
@@ -77,25 +76,26 @@ module securitybox_controller_JJ(
 				else nextState <= S8;
 			
 			S5:
-			   if(tblock<10) nextState <= S5;
-				else nextState <= S9;
-				
-			S9:
-			   if(PressedKey) begin
-						
-					if(key == 4'b1001) nextState <= S1;
-					else nextState <= S6;
-				end
-						
+			   if (tblock < 10) nextState <= S5;
 				else nextState <= S0;
 				
+//			S9:
+//			   if(PressedKey) begin
+//						
+//					if(key == 4'b1001) nextState <= S1;
+//					else nextState <= S6;
+//				end
+//						
+//				else nextState <= S0;
+				
 			S10:
-			   if(DoorSw) nextState <= S0;
+			   if (DoorSw) nextState <= S0;
 				else nextState <= S10;
 				
 		
 			default:
 				nextState <= S0;
+				
 		endcase
 	end
 	
@@ -110,19 +110,19 @@ module securitybox_controller_JJ(
 			end	
 			S1: begin
 				OpenDoorLed = 1'b0;
-				CloseDoorLed = 1'b0;
+				CloseDoorLed = 1'b1;
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
 			end	
 			S2: begin
 				OpenDoorLed = 1'b0;
-				CloseDoorLed = 1'b0;
+				CloseDoorLed = 1'b1;
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
 			end	
 			S3: begin
 				OpenDoorLed = 1'b0;
-				CloseDoorLed = 1'b0;
+				CloseDoorLed = 1'b1;
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
 			end	
@@ -140,24 +140,24 @@ module securitybox_controller_JJ(
 			end	
 			S6: begin
 				OpenDoorLed = 1'b0;
-				CloseDoorLed = 1'b0;
+				CloseDoorLed = 1'b1;
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
 			end
 			S7: begin
 				OpenDoorLed = 1'b0;
-				CloseDoorLed = 1'b0;
+				CloseDoorLed = 1'b1;
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
 			end
 			S8: begin
 				OpenDoorLed = 1'b0;
-				CloseDoorLed = 1'b0;
+				CloseDoorLed = 1'b1;
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
 			end
 			S9: begin
-				OpenDoorLed = 1'b0;
+				OpenDoorLed = 1'b1;
 				CloseDoorLed = 1'b0;
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
