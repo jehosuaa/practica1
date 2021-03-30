@@ -156,12 +156,12 @@ module securitybox_controller_JJ(
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
 			end
-			S9: begin
-				OpenDoorLed = 1'b1;
-				CloseDoorLed = 1'b0;
-				WrongPWLed = 1'b0;
-				OpenDoor = 1'b0;
-			end
+//			S9: begin
+//				OpenDoorLed = 1'b1;
+//				CloseDoorLed = 1'b0;
+//				WrongPWLed = 1'b0;
+//				OpenDoor = 1'b0;
+//			end
 			S10: begin
 				OpenDoorLed = 1'b1;
 				CloseDoorLed = 1'b0;
@@ -170,7 +170,7 @@ module securitybox_controller_JJ(
 			end
 			default: begin
 				OpenDoorLed = 1'b0;
-				CloseDoorLed = 1'b0;
+				CloseDoorLed = 1'b1;
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
 			end
