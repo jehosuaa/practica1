@@ -88,9 +88,9 @@ module securitybox_controller_JJ(
 //						
 //				else nextState <= S0;
 				
-			S10:
-			   if (DoorSw) nextState <= S0;
-				else nextState <= S10;
+//			S10:
+//			   if (DoorSw) nextState <= S0;
+//				else nextState <= S10;
 				
 		
 			default:
