@@ -1,13 +1,15 @@
-module securitybox_controller_JJ(
-	input logic Clk,
-	input logic Reset,
-	input logic [3:0] Key,
-	input logic PressedKey, DoorSw,
-	output logic OpenDoor,
-	output logic OpenDoorLed, ClosedDoorLed,
-	output logic WrongPWLed);
+module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, OpenDoorLed, ClosedDoorLed, WrongPWLed);
 	
+	input logic Clk;
+	input logic Reset;
+	input logic [3:0] Key;
+	input logic PressedKey, DoorSw;
+	output logic OpenDoor;
+	output logic OpenDoorLed, ClosedDoorLed;
+	output logic WrongPWLed;
 	
+	localparam logic[3:0] D1=4'b1001,D2=4'b0101,D3=4'b0010,D4=4'b0000;
+	localparam logic twait=10;
 	typedef enum logic [3:0] {S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10} State;
 	
 	reg [3:0] tblock;
@@ -16,7 +18,7 @@ module securitybox_controller_JJ(
 	always_ff @(posedge Reset, posedge Clk) begin
 	
 		if(Reset)
-			currentState <= S9;
+			currentState <= S0;
 		else
 			currentState <= nextState;
 	
@@ -31,7 +33,7 @@ module securitybox_controller_JJ(
 			S0:		
 				if(PressedKey) begin
 						
-					if(Key == 4'b1001) nextState <= S1;	
+					if(Key == D1) nextState <= S1;	
 					else nextState <= S6; end
 						
 				else 	nextState <= S0;
@@ -39,7 +41,7 @@ module securitybox_controller_JJ(
 			S1: 
 				if(PressedKey && (DoorSw==0)) begin  //necesito doorsw?
 						
-					if(Key == 4'b0101) nextState <= S2;			
+					if(Key == D2) nextState <= S2;			
 					else nextState <= S7; end
 					
 				else nextState <= S1;
@@ -47,7 +49,7 @@ module securitybox_controller_JJ(
 			S2: 
 				if(PressedKey && (DoorSw==0)) begin
 						
-					if(Key == 4'b0010) nextState <= S3;
+					if(Key == D3) nextState <= S3;
 					else nextState <= S8; end
 						
 				else nextState <= S2;
@@ -55,13 +57,14 @@ module securitybox_controller_JJ(
 			S3: 
 				if(PressedKey && (DoorSw==0)) begin
 						
-					if(Key == 4'b0000) nextState <= S4;						
+					if(Key == D4) nextState <= S4;						
 					else nextState <= S5; end
 		
 				else nextState <= S3;
 			
 			S4:
-				nextState <= S10;
+				if(DoorSw==1) nextState <= S0;
+				else nextState <= S10;
 				
 			S6: 
 				if(PressedKey && (DoorSw==0)) nextState <= S7;
@@ -190,18 +193,34 @@ module test_bench();
 	logic PressedKey, DoorSw, OpenDoor;
 	logic OpenDoorLed, ClosedDoorLed, WrongPWLed;
 	
-	securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, OpenDoorLed, ClosedDoorLed, WrongPWLed);
+	securitybox_controller_JJ aghhhhh(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, OpenDoorLed, ClosedDoorLed, WrongPWLed);
 	
 	initial begin 
-		Clk = 0;
-		Reset = 1; #2ms;
-		Reset = 0; #20s; 
-		PressedKey = 1; Key = 3'd9; #3ms;
-		PressedKey = 1; Key = 3'd2; #3ms;
+		Clk = 1;
+		DoorSw=0;
+		PressedKey=0;
+		Key=0000;
+		Reset = 1;#2ms;
+		Reset = 0;#2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0101; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0010; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0000; #4ns;
+		DoorSw = 0; #3ms;
+		DoorSw = 1; #3ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0101; #2ms;
+		PressedKey = 0; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0001; #2ms;
 		
-		$Stop;
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #8ms;
+		
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #4ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b1000; #10ms;
+		
+		$stop;
 	end
 	
-	always #1ms Clk = ~Clk;
+	always #1ms Clk =  ~Clk;
 	
 endmodule

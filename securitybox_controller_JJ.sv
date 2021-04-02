@@ -8,7 +8,8 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 	output logic OpenDoorLed, ClosedDoorLed;
 	output logic WrongPWLed;
 	
-	
+	localparam logic[3:0] D1=4'b1001,D2=4'b0101,D3=4'b0010,D4=4'b0000;
+	localparam logic[3:0] twait=4'b0101;
 	typedef enum logic [3:0] {S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10} State;
 	
 	reg [3:0] tblock;
@@ -32,7 +33,7 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 			S0:		
 				if(PressedKey) begin
 						
-					if(Key == 4'b1001) nextState <= S1;	
+					if(Key == D1) nextState <= S1;	
 					else nextState <= S6; end
 						
 				else 	nextState <= S0;
@@ -40,7 +41,7 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 			S1: 
 				if(PressedKey && (DoorSw==0)) begin  //necesito doorsw?
 						
-					if(Key == 4'b0101) nextState <= S2;			
+					if(Key == D2) nextState <= S2;			
 					else nextState <= S7; end
 					
 				else nextState <= S1;
@@ -48,7 +49,7 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 			S2: 
 				if(PressedKey && (DoorSw==0)) begin
 						
-					if(Key == 4'b0010) nextState <= S3;
+					if(Key == D3) nextState <= S3;
 					else nextState <= S8; end
 						
 				else nextState <= S2;
@@ -56,7 +57,7 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 			S3: 
 				if(PressedKey && (DoorSw==0)) begin
 						
-					if(Key == 4'b0000) nextState <= S4;						
+					if(Key == D4) nextState <= S4;						
 					else nextState <= S5; end
 		
 				else nextState <= S3;
@@ -78,7 +79,7 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 				else nextState <= S8;
 			
 			S5:
-			   if (tblock < 10) nextState <= S5;
+			   if (4 > tblock) nextState <= S5;
 				else nextState <= S0;
 				
 //			S9:
@@ -195,28 +196,53 @@ module test_bench();
 	securitybox_controller_JJ aghhhhh(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, OpenDoorLed, ClosedDoorLed, WrongPWLed);
 	
 	initial begin 
-		Clk = 0;
-		Reset = 1;#4ns;
-		Reset = 0;#4ns;
-		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #4ns;
-		PressedKey = 1; DoorSw = 0; Key = 4'b0101; #4ns;
-		PressedKey = 1; DoorSw = 0; Key = 4'b0010; #4ns;
-		PressedKey = 1; DoorSw = 0; Key = 4'b0000; #4ns;
-		DoorSw = 0; #5ns;
-		DoorSw = 1; #5ns;
-		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #4ns;
-		PressedKey = 1; DoorSw = 0; Key = 4'b0101; #4ns;
-		PressedKey = 0; DoorSw = 0; Key = 4'b1001; #4ns;
-		PressedKey = 1; DoorSw = 0; Key = 4'b0001; #4ns;
+		Clk = 1;
+		DoorSw=0;
+		PressedKey=0;
+		Key=0000;
+		Reset = 1;#2ms;
+		Reset = 0;#2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0101; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0010; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0000; #2ms;
+		DoorSw = 0; #3ms;
+		DoorSw = 1; #3ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0101; #2ms;
+		PressedKey = 0; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0001; #2ms;
 		
-		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #16ns;
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #8ms;
 		
-		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #8ns;
-		PressedKey = 1; DoorSw = 0; Key = 4'b1000; #18ns;
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #4ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b1000; #10ms;
+		
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0111; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0010; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0000; #2ms;
+		
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0101; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0010; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0000; #2ms;
+		
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0101; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0010; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0000; #2ms;
+		
+		PressedKey = 1; DoorSw = 0; Key = 4'b1001; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0101; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0010; #2ms;
+		PressedKey = 1; DoorSw = 0; Key = 4'b0000; #3ms;
+		DoorSw = 1; #3ms;
+		
 		
 		$stop;
 	end
 	
-	always #2ns Clk =  ~Clk;
+	always #1ms Clk =  ~Clk;
 	
 endmodule
