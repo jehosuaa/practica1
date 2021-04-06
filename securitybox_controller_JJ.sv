@@ -39,7 +39,7 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 				else 	nextState <= S0;
 			
 			S1: 
-				if(PressedKey && (DoorSw==0)) begin  //necesito doorsw?
+				if(PressedKey && (DoorSw==0)) begin  
 						
 					if(Key == D2) nextState <= S2;			
 					else nextState <= S7; end
@@ -64,7 +64,7 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 			
 			S4:
 				if(DoorSw==1) nextState <= S0;
-				else nextState <= S10;
+				else nextState <= S9;
 				
 			S6: 
 				if(PressedKey && (DoorSw==0)) nextState <= S7;
@@ -82,20 +82,10 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 			   if (4 > tblock) nextState <= S5;
 				else nextState <= S0;
 				
-//			S9:
-//			   if(PressedKey) begin
-//						
-//					if(key == 4'b1001) nextState <= S1;
-//					else nextState <= S6;
-//				end
-//						
-//				else nextState <= S0;
-				
-			S10:
+			S9:
 			   if (DoorSw) nextState <= S0;
-				else nextState <= S10;
+				else nextState <= S9;
 				
-		
 			default:
 				nextState <= S0;
 				
@@ -137,7 +127,7 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 			end	
 			S5: begin
 				OpenDoorLed = 1'b0;
-				ClosedDoorLed = 1'b0;
+				ClosedDoorLed = 1'b1;
 				WrongPWLed = 1'b1;
 				OpenDoor = 1'b0;
 			end	
@@ -159,7 +149,7 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 				WrongPWLed = 1'b0;
 				OpenDoor = 1'b0;
 			end
-			S10: begin
+			S9: begin
 				OpenDoorLed = 1'b1;
 				ClosedDoorLed = 1'b0;
 				WrongPWLed = 1'b0;
@@ -182,7 +172,6 @@ module securitybox_controller_JJ(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, 
 			if(currentState==S5)
 				tblock <= tblock + 1;
 			else tblock <=0 ;
-	
 	end
 endmodule
 
@@ -193,7 +182,7 @@ module test_bench();
 	logic PressedKey, DoorSw, OpenDoor;
 	logic OpenDoorLed, ClosedDoorLed, WrongPWLed;
 	
-	securitybox_controller_JJ aghhhhh(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, OpenDoorLed, ClosedDoorLed, WrongPWLed);
+	securitybox_controller_JJ tb(Clk, Reset, Key, PressedKey, DoorSw, OpenDoor, OpenDoorLed, ClosedDoorLed, WrongPWLed);
 	
 	initial begin 
 		Clk = 1;
@@ -238,7 +227,6 @@ module test_bench();
 		PressedKey = 1; DoorSw = 0; Key = 4'b0010; #2ms;
 		PressedKey = 1; DoorSw = 0; Key = 4'b0000; #3ms;
 		DoorSw = 1; #3ms;
-		
 		
 		$stop;
 	end
